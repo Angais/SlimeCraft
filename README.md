@@ -9,6 +9,15 @@ physics and your vacpack, and Minecraft is layered on top of it.
 > SlimeCraft contains **no** code, textures, sounds or models from Minecraft or Slime Rancher. Minecraft's assets are
 > loaded at runtime from **your own** Minecraft: Java Edition installation, so you need to own both games.
 
+> [!WARNING]
+> **Use at your own risk – back up your saves first.** SlimeCraft is an unofficial, experimental fan mod that changes
+> how Slime Rancher runs. It may cause bugs, crashes, lost progress or corrupted/unloadable save files, and it may
+> conflict with other mods or future game updates. **Before installing, copy your whole save folder somewhere safe:**
+> `%USERPROFILE%\AppData\LocalLow\Monomi Park\Slime Rancher`.
+> SlimeCraft stores its own data in separate files and is designed not to modify your Slime Rancher saves, but no
+> guarantee is given: the software is provided **"as is", without warranty of any kind**, and the author is not
+> responsible for any damage or data loss (see the [License](LICENSE)).
+
 ![Minecraft TNT launching Slime Rancher's pink slimes](docs/images/tnt-launches-slimes.jpg)
 
 | | |
@@ -111,6 +120,11 @@ game files* restores a vanilla install.
 * **Magenta/black checkerboard textures** – Minecraft wasn't found or the version lacks some files. Start Minecraft
   26.1.2 once from the official launcher, or set `MinecraftDir` / `MinecraftVersion` in the config.
 * **Nothing happens** – look for lines with `SlimeCraft` in `BepInEx\LogOutput.log`.
+* **My saves are missing** – usually Steam Cloud, not a deleted file: if Slime Rancher is started while Steam is
+  signed in to a *different* Steam account than the one that owns the saves, Steam moves them to that account's
+  folder (`Steam\userdata\<account id>\433340\`). Sign in to the right account, or restore the backup you made before
+  installing. If a save really fails to load, remove SlimeCraft and restore your backup, then
+  [open an issue](../../issues) with your `BepInEx\LogOutput.log`.
 * **Mod conflicts** – SlimeCraft patches Slime Rancher's vacpack input, pause menu and HUD; other mods touching the
   same systems may conflict.
 
