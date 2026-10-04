@@ -1,0 +1,67 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    SlimeCraft - Minecraft inside Slime Rancher (BepInEx 5 plugin, Unity 2019.4 Mono / .NET 4.x).
+    Build:   dotnet build SlimeCraft/SlimeCraft.csproj -c Release
+    Partial build of only some modules (used while modules are developed in parallel):
+             dotnet build SlimeCraft/SlimeCraft.csproj -p:SCModules=Core%3BBlocks   (%3B = escaped ";")
+    Contracts + Plugin.cs are always compiled. Modules only reference Contracts (never each other).
+    References (nothing is bundled): Slime Rancher's own Managed\*.dll from $(SRDir), and BepInEx.dll + 0Harmony.dll
+    from lib\BepInEx if present, otherwise from the BepInEx installed in the game folder ($(SRDir)\BepInEx\core).
+    Override with -p:SRDir="..." and/or -p:BepInExCore="...".
+  -->
+  <PropertyGroup>
+    <TargetFramework>net472</TargetFramework>
+    <AssemblyName>SlimeCraft</AssemblyName>
+    <RootNamespace>SlimeCraft</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS0649;CS0169;CS0414;CS1591;MSB3277</NoWarn>
+    <SRDir Condition="'$(SRDir)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Slime Rancher</SRDir>
+    <SRManaged>$(SRDir)\SlimeRancher_Data\Managed</SRManaged>
+    <BepInExCore Condition="'$(BepInExCore)' == '' And Exists('$(MSBuildThisFileDirectory)..\lib\BepInEx\BepInEx.dll')">$(MSBuildThisFileDirectory)..\lib\BepInEx</BepInExCore>
+    <BepInExCore Condition="'$(BepInExCore)' == ''">$(SRDir)\BepInEx\core</BepInExCore>
+    <SCModules Condition="'$(SCModules)' == ''">Core;Hud;FirstPerson;Blocks;Entities;Testing</SCModules>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Always compiled -->
+  <ItemGroup>
+    <Compile Include="src\Plugin.cs" />
+    <Compile Include="src\Contracts\**\*.cs" />
+  </ItemGroup>
+  <!-- Modules (selectable). %(metadata) batching does not work in an Include outside a target, so each module
+       folder is listed explicitly and enabled when its name appears in the ;-separated $(SCModules). -->
+  <PropertyGroup>
+    <_SCMods>;$(SCModules.Replace(' ', '').Replace(',', ';'));</_SCMods>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="src\Core\**\*.cs" Condition="$(_SCMods.Contains(';Core;'))" />
+    <Compile Include="src\Hud\**\*.cs" Condition="$(_SCMods.Contains(';Hud;'))" />
+    <Compile Include="src\FirstPerson\**\*.cs" Condition="$(_SCMods.Contains(';FirstPerson;'))" />
+    <Compile Include="src\Blocks\**\*.cs" Condition="$(_SCMods.Contains(';Blocks;'))" />
+    <Compile Include="src\Entities\**\*.cs" Condition="$(_SCMods.Contains(';Entities;'))" />
+    <Compile Include="src\Testing\**\*.cs" Condition="$(_SCMods.Contains(';Testing;'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Assembly-CSharp"><HintPath>$(SRManaged)\Assembly-CSharp.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Assembly-CSharp-firstpass"><HintPath>$(SRManaged)\Assembly-CSharp-firstpass.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="InControl"><HintPath>$(SRManaged)\InControl.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Unity.TextMeshPro"><HintPath>$(SRManaged)\Unity.TextMeshPro.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.UI"><HintPath>$(SRManaged)\UnityEngine.UI.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="$(SRManaged)\UnityEngine.dll" Private="false" />
+    <Reference Include="$(SRManaged)\UnityEngine.*Module.dll" Private="false" />
+  </ItemGroup>
+</Project>

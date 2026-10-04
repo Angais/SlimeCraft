@@ -1,0 +1,26 @@
+# --- Local-only: private reference material, game/loader binaries, personal save backups ---
+_reference/
+_backup/
+lib/
+*.sav
+*.prf
+
+# --- Build output ---
+bin/
+obj/
+bin_m/
+obj_m/
+*.user
+*.suo
+.vs/
+.idea/
+
+# --- Local test output / misc ---
+SlimeCraft_test/
+*.log
+# runtime output of the mod (written to BepInEx/config/SlimeCraft on the player's machine, never part of the repo)
+vacpack_icon*.png
+test_saves/
+steam_appid.txt
+Thumbs.db
+desktop.ini
